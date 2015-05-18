@@ -27,24 +27,40 @@ class Deal
   end
 
   def self.objectify(line)
-    # relationships
-    # player = Player.new
-    # hand = Hand.new
-    # hand.add_player(player)
-    # card = Card.new(....)
-    # card.add_hand(hand)
+    cards_data = line.gsub(/\s+/m, ' ').strip.split(" ")
+    hands_data = cards_data.each_slice(5).to_a
 
-    cards = line.gsub(/\s+/m, ' ').strip.split(" ")
-    cards.collect! do |card|
-      suit = card.match(/[chds]/i).to_s
-      number = card.match(/[^chds]/i).to_s
-      Card.new(suit: suit, number: number)
+    hands_array_objects = []
+    hands_data.each_with_index do |hand, index|
+      new_player = Player.new("player#{index}")
+      new_hand = Hand.new
+      new_hand.add_player(new_player)
+
+      cards = []
+      hand.each do |card|
+        suit = card.match(/[chds]/i).to_s
+        number = card.match(/[^chds]/i).to_s
+        card = Card.new(suit: suit, number: number)
+        card.add_hand(new_hand)
+        cards.push(card)
+      end
+      new_hand.add_cards(cards)
+      hands_array_objects.push(new_hand)
     end
-    # binding.pry
-    hands = cards.each_slice(5).to_a
-    binding.pry
-    hands.map!.each_with_index {|hand, index| Hand.new(hand, Player.new("player#{index}".to_sym))}
+    hands_array_objects
   end
+  #   cards = line.gsub(/\s+/m, ' ').strip.split(" ")
+  #   cards.collect! do |card|
+
+  #     suit = card.match(/[chds]/i).to_s
+  #     number = card.match(/[^chds]/i).to_s
+  #     Card.new(suit: suit, number: number)
+  #   end
+  #   # binding.pry
+  #   hands = cards.each_slice(5).to_a
+  #   binding.pry
+  #   hands.map!.each_with_index {|hand, index| Hand.new(hand, Player.new("player#{index}".to_sym))}
+  # end
 
 end
 
@@ -181,15 +197,23 @@ class Hand
     royal_flush: 9,
   }
 
-  attr_reader :cards, :player
+  attr_accessor :cards, :player
 
-  def initialize(cards, player)
-    @cards = cards
-    @player = player
-  end
+  # def initialize(cards, player)
+  #   @cards = cards
+  #   @player = player
+  # end
 
   def <=> other
     self.rank <=> other.rank
+  end
+
+  def add_cards(cards)
+    self.cards = cards
+  end
+
+  def add_player(player)
+    self.player = player
   end
 
   def rank
@@ -317,6 +341,7 @@ class Card
   }
 
   attr_reader :value, :suit
+  attr_accessor :hand
 
   def initialize(hash={})
     @suit = hash[:suit]
@@ -325,6 +350,10 @@ class Card
 
   def <=> other
      other.value <=> self.value
+  end
+
+  def add_hand(hand)
+    self.hand = hand
   end
 
   def number_value(value)
