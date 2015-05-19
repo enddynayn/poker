@@ -9,7 +9,6 @@ end
 
 class Deal
   require 'pry'
-  require 'json'
   require 'active_support'
 
   def self.cards
@@ -20,10 +19,12 @@ class Deal
           game.winner
         rescue
           puts 'oooh nooo!'
-          binding.pry
         end
       end
     end
+    binding.pry
+
+    puts Game.games_count
   end
 
   def self.objectify(line)
@@ -49,25 +50,34 @@ class Deal
     end
     hands_array_objects
   end
-  #   cards = line.gsub(/\s+/m, ' ').strip.split(" ")
-  #   cards.collect! do |card|
-
-  #     suit = card.match(/[chds]/i).to_s
-  #     number = card.match(/[^chds]/i).to_s
-  #     Card.new(suit: suit, number: number)
-  #   end
-  #   # binding.pry
-  #   hands = cards.each_slice(5).to_a
-  #   binding.pry
-  #   hands.map!.each_with_index {|hand, index| Hand.new(hand, Player.new("player#{index}".to_sym))}
-  # end
 
 end
 
 class Game
+  @@games_count = 0
+  @@player_wins_count = Hash.new(0)
+
   attr_reader :hands
   def initialize(hands)
     @hands = hands
+    @@games_count += 1
+
+    hands.each do |hand|
+      @@player_wins_count[hand.player.name]
+    end
+
+  end
+
+  def self.add_win_to_player(player)
+    @@player_wins_count[player] += 1
+  end
+
+  def self.get_player_winnings_count
+    @@player_wins_count
+  end
+
+  def self.games_count
+    @@games_count
   end
 
   def rankings
@@ -82,39 +92,59 @@ class Game
           player1 = sorted_hands_by_rank_asc[0].cards.sort
           player2 = sorted_hands_by_rank_asc[1].cards.sort
           ziped_card = player1.zip(player2)
-          winner = []
           ziped_card.each do |a, b|
-            if (a.value >  b.value)
-              winner.push(a)
-            elsif (a.value <=> b.value)
-              winner.push(b)
+            if (a.value ==  b.value)
+              next
+            elsif (a.value < b.value)
+              Game.add_win_to_player(b.hand.player.name)
+              return
+              # ADD CODE TO PUTS OUT THE WINNING CARDS
+            elsif (a.value > b.value)
+              Game.add_win_to_player(a.hand.player.name)
+              return
             else
-              0
+              Game.add_win_to_player('draw')
+              # ADD CODE TO PUTS OUT THE WINNING CARDS
             end
+
           end
         end
+
+      if sorted_hands_by_rank_asc[0].rank == 1
+        if sorted_hands_by_rank_asc[0].repeated_cards.pop.value == sorted_hands_by_rank_asc[1].repeated_cards.pop.value
+            player1 = sorted_hands_by_rank_asc[0].unique_cards.sort
+            player2 = sorted_hands_by_rank_asc[1].unique_cards.sort
+          ziped_card = player1.zip(player2)
+          ziped_card.each do |a, b|
+            if (a.value ==  b.value)
+              next
+            elsif (a.value < b.value)
+              Game.add_win_to_player(b.hand.player.name)
+              return
+              # ADD CODE TO PUTS OUT THE WINNING CARDS
+            elsif (a.value > b.value)
+              Game.add_win_to_player(a.hand.player.name)
+              return
+            else
+              Game.add_win_to_player('draw')
+              # ADD CODE TO PUTS OUT THE WINNING CARDS
+            end
+          end
+        elsif sorted_hands_by_rank_asc[0].repeated_cards.pop.value > sorted_hands_by_rank_asc[1].repeated_cards.pop.value
+          Game.add_win_to_player(sorted_hands_by_rank_asc[0].player.name)
+        else
+          Game.add_win_to_player(sorted_hands_by_rank_asc[1].player.name)
+        end
+      end
+
+       if sorted_hands_by_rank_asc[0].rank == 2
         binding.pry
 
-       # return if c
-       # ombined_cards.sort {|a,b| a.value <=> b.value }.reverse.group_by(&:value).select { |v, card| card.length == 1}.first.present?
-       # puts 'draw'
-      # if sorted_hands_by_rank_asc[0].rank == 1
-      #   if pairs.value == pair.values
-      #     highest_card = remove_all_pairs
-      #     highest_cart.player
-      #     add_win_to(player)
-      # => a -b draw
-      #   end
+       end
 
-      #    if sorted_hands_by_rank_asc[0].rank == 2
-      #       tricky
-      # => a - b draw
-      #    end
-
-      #    if sorted_hands_by_rank_asc[0].rank == 3
-      #     check_to_see_who has the highest 3 of a kind
-      #
-      #    end
+        # if sorted_hands_by_rank_asc[0].rank == 3
+        #   check_to_see_who has the highest 3 of a kind
+        #  end
 
       #    if sorted_hands_by_rank_asc[0].rank == 4
       #     draw
@@ -139,24 +169,6 @@ class Game
             # pop last card
             #get highest card
       #    end
-        puts '333333333333333333333333333333' * 1000 if sorted_hands_by_rank_asc[0].rank == 3
-        puts '222222222222222222222222' * 10 if sorted_hands_by_rank_asc[0].rank == 2
-        puts '444444 333333 straight straight  444444' if sorted_hands_by_rank_asc[0].rank == 4
-        puts '666666666666666666666666' if sorted_hands_by_rank_asc[0].rank == 6
-        puts '77777777777777777777' if sorted_hands_by_rank_asc[0].rank == 7
-        puts '8888888888888888888' if sorted_hands_by_rank_asc[0].rank == 8
-        puts '9999999999999999999' if sorted_hands_by_rank_asc[0].rank == 9
-        puts "ranking: #{sorted_hands_by_rank_asc[0].rank}"
-      # puts '*********************** hand 1 ***********************'
-      # puts "ranking: #{sorted_hands_by_rank_asc[0].rank}"
-      # puts sorted_hands_by_rank_asc[0].values
-      # puts sorted_hands_by_rank_asc[0].suits
-      # puts '***********************'
-      # puts '*********************** hand 2 ***********************'
-      # puts "ranking: #{sorted_hands_by_rank_asc[1].rank}"
-      # puts sorted_hands_by_rank_asc[1].values
-      # puts sorted_hands_by_rank_asc[1].suits
-      # puts '***********************'
     #   if one_pair
     #     highest_pair(a,b)
     #   if two_pair
@@ -169,9 +181,9 @@ class Game
       # puts 'same ranking both players have the same ranking'
 
     elsif sorted_hands_by_rank_asc[0].rank > sorted_hands_by_rank_asc[1].rank
-      puts '' #'player 1 wins'
+      Game.add_win_to_player(sorted_hands_by_rank_asc[0].player.name)
     else
-      puts '' #'player 2 wins'
+      Game.add_win_to_player(sorted_hands_by_rank_asc[1].player.name)
     end
   end
 end
@@ -315,6 +327,10 @@ class Hand
   def royal_flush?
     flush? && straight? && (low_card.value == 10)
   end
+
+  # def get_pairs
+  #   cards.group_by(&:value).select { |k,v| v.size > 1}
+  # end
 
   def repeated_cards
     counts = Hash.new(0)
