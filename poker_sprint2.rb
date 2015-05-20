@@ -109,40 +109,10 @@ class Game
         compare_cards(player1, player2)
       end
 
-      # HIGH CARD
-      if sorted_hands_by_rank_asc[0].rank == 0
+      if [:high_card, :straight, :flush, :straight_flush, :royal_flush].include? Hand::RANK.key(sorted_hands_by_rank_asc[0].rank)
         player1 = sorted_hands_by_rank_asc[0].cards.sort
         player2 = sorted_hands_by_rank_asc[1].cards.sort
         compare_cards(player1,player2)
-      end
-
-      # STRAIGHT
-      if sorted_hands_by_rank_asc[0].rank == 4
-        player1 = sorted_hands_by_rank_asc[0].cards.sort
-        player2 = sorted_hands_by_rank_asc[1].cards.sort
-        compare_cards(player1, player2)
-      end
-
-      # FLUSH
-      if sorted_hands_by_rank_asc[0].rank == 5
-        player1 = sorted_hands_by_rank_asc[0].cards.sort
-        player2 = sorted_hands_by_rank_asc[1].cards.sort
-        compare_cards(player1, player2)
-      end
-
-       # STRAIGHT FLUSH 8
-      if sorted_hands_by_rank_asc[0].rank == 8
-        player1 = sorted_hands_by_rank_asc[0].cards.sort
-        player2 = sorted_hands_by_rank_asc[1].cards.sort
-        compare_cards(player1, player2)
-      end
-
-      # ROYAL FLUSH 9
-      if sorted_hands_by_rank_asc[0].rank == 9
-        binding.pry
-        player1 = sorted_hands_by_rank_asc[0].cards.sort
-        player2 = sorted_hands_by_rank_asc[1].cards.sort
-        compare_cards(player1, player2)
       end
 
       # FULL HOUSE 3 , 2
