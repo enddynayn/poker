@@ -78,7 +78,6 @@ class Game
     hands.sort
   end
 
-
   def compare_cards(player1, player2)
     ziped_cards = player1.zip(player2)
     tie = true
@@ -95,10 +94,9 @@ class Game
         Game.add_win_to_player(a.hand.player.name)
         return
       end
-
-      if tie
-        Game.add_win_to_player('draw')
-      end
+    end
+    if tie
+      Game.add_win_to_player('draw')
     end
   end
 
@@ -109,61 +107,39 @@ class Game
         player1 = sorted_hands_by_rank_asc[0].cards.sort
         player2 = sorted_hands_by_rank_asc[1].cards.sort
         compare_cards(player1,player2)
-
       end
 
       # 1 pair
       if sorted_hands_by_rank_asc[0].rank == 1
-        # compares pairs
-        if sorted_hands_by_rank_asc[0].repeated_cards.pop.value > sorted_hands_by_rank_asc[1].repeated_cards.pop.value
-          Game.add_win_to_player(sorted_hands_by_rank_asc[0].player.name)
-        elsif sorted_hands_by_rank_asc[0].repeated_cards.pop.value < sorted_hands_by_rank_asc[1].repeated_cards.pop.value
-          Game.add_win_to_player(sorted_hands_by_rank_asc[1].player.name)
-        else
-          player1 = sorted_hands_by_rank_asc[0].unique_cards.sort
-          player2 = sorted_hands_by_rank_asc[1].unique_cards.sort
-          compare_cards(player1, player2)
-        end
+        player1 = sorted_hands_by_rank_asc[0].repeated_cards + sorted_hands_by_rank_asc[0].unique_cards.sort
+        player2 =  sorted_hands_by_rank_asc[1].repeated_cards + sorted_hands_by_rank_asc[1].unique_cards.sort
+        compare_cards(player1, player2)
       end
 
       # TWO PAIR
       if sorted_hands_by_rank_asc[0].rank == 2
-        player1_uniq_pairs = sorted_hands_by_rank_asc[0].repeated_cards.uniq { |card| card.value}.sort
-        player2_uniq_pairs = sorted_hands_by_rank_asc[1].repeated_cards.uniq { |card| card.value}.sort
-
-        compare_cards(player1_uniq_pairs, player2_uniq_pairs)
-
-        player1 = sorted_hands_by_rank_asc[0].unique_cards.sort
-        player2 = sorted_hands_by_rank_asc[1].unique_cards.sort
-        if player1.first.value > player2.first.value
-          Game.add_win_to_player(player1.first.hand.player.name)
-        elsif player1.first.value < player2.first.value
-          Game.add_win_to_player(player2.first.hand.player.name)
-        else
-          Game.add_win_to_player('draw')
-        # ADD CODE TO PUTS OUT THE WINNING CARDS
-        end
+        # binding.pry
+        player1 = sorted_hands_by_rank_asc[0].repeated_cards + sorted_hands_by_rank_asc[0].unique_cards.sort
+        player2 =  sorted_hands_by_rank_asc[1].repeated_cards + sorted_hands_by_rank_asc[1].unique_cards.sort
+        compare_cards(player1, player2)
       end
 
       # THREE OF A KIND
       if sorted_hands_by_rank_asc[0].rank == 3
-        player1_uniq_pairs = sorted_hands_by_rank_asc[0].repeated_cards.uniq { |card| card.value}.sort
-        player2_uniq_pairs = sorted_hands_by_rank_asc[1].repeated_cards.uniq { |card| card.value}.sort
+        player1 = sorted_hands_by_rank_asc[0].repeated_cards + sorted_hands_by_rank_asc[0].unique_cards.sort
+        player2 =  sorted_hands_by_rank_asc[1].repeated_cards + sorted_hands_by_rank_asc[1].unique_cards.sort
         compare_cards(player1_uniq_pairs, player2_uniq_pairs)
-       end
+      end
+
+      # STRAIGHT
 
       if sorted_hands_by_rank_asc[0].rank == 4
-        if sorted_hands_by_rank_asc[0].cards.first.value == sorted_hands_by_rank_asc[1].cards.first.value
-          Game.add_win_to_player('draw')
-        elsif sorted_hands_by_rank_asc[0].cards.first.value < sorted_hands_by_rank_asc[1].cards.first.value
-          Game.add_win_to_player(sorted_hands_by_rank_asc[1].player.name)
-        else
-          Game.add_win_to_player(sorted_hands_by_rank_asc[0].player.name)
-        end
+        player1 = sorted_hands_by_rank_asc[0].cards.sort
+        player2 = sorted_hands_by_rank_asc[1].cards.sort
+        compare_cards(player1, player2)
       end
 
       # FLUSH
-
       if sorted_hands_by_rank_asc[0].rank == 5
         player1 = sorted_hands_by_rank_asc[0].cards.sort
         player2 = sorted_hands_by_rank_asc[1].cards.sort
@@ -171,7 +147,6 @@ class Game
       end
 
       # FULL HOUSE 3 , 2
-
       if sorted_hands_by_rank_asc[0].rank == 6
         player1 = sorted_hands_by_rank_asc[0].arrange_by_of_kind_first
         player2 = sorted_hands_by_rank_asc[1].arrange_by_of_kind_first
@@ -179,7 +154,6 @@ class Game
       end
 
       # FOUR OF A KIND
-
       if sorted_hands_by_rank_asc[0].rank == 7
         binding.pry
         player1_uniq_pairs = sorted_hands_by_rank_asc[0].repeated_cards.uniq { |card| card.value}.sort
@@ -188,7 +162,6 @@ class Game
       end
 
        # STRAIGHT FLUSH 8
-
       if sorted_hands_by_rank_asc[0].rank == 8
         player1 = sorted_hands_by_rank_asc[0].cards.sort
         player2 = sorted_hands_by_rank_asc[1].cards.sort
@@ -199,7 +172,6 @@ class Game
       if sorted_hands_by_rank_asc[0].rank == 9
         Game.add_win_to_player('draw')
       end
-
 
     elsif sorted_hands_by_rank_asc[0].rank > sorted_hands_by_rank_asc[1].rank
       Game.add_win_to_player(sorted_hands_by_rank_asc[0].player.name)
@@ -401,7 +373,7 @@ class Card
   end
 
   def <=> other
-     other.value <=> self.value
+    other.value <=> self.value
   end
 
   def add_hand(hand)
