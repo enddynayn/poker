@@ -86,69 +86,74 @@ class Game
 
   def winner
     sorted_hands_by_rank_asc = hands.sort
-    # binding.pry
     if sorted_hands_by_rank_asc[0].rank == sorted_hands_by_rank_asc[1].rank
-      # binding.pry
       if sorted_hands_by_rank_asc[0].rank == 0
         player1 = sorted_hands_by_rank_asc[0].cards.sort
         player2 = sorted_hands_by_rank_asc[1].cards.sort
         ziped_card = player1.zip(player2)
-        tie_break = true
+        tie = true
         ziped_card.each do |a, b|
           if (a.value ==  b.value)
             next
           elsif (a.value < b.value)
-            tie_break = false
+            tie = false
             Game.add_win_to_player(b.hand.player.name)
             return
             # ADD CODE TO PUTS OUT THE WINNING CARDS
           else (a.value > b.value)
-            tie_break = false
+            tie = false
             Game.add_win_to_player(a.hand.player.name)
             return
           end
 
-          if tie_break
+          if tie
             Game.add_win_to_player('draw')
           end
 
         end
       end
 
+      # 1 pair
+
       if sorted_hands_by_rank_asc[0].rank == 1
-        if sorted_hands_by_rank_asc[0].repeated_cards.pop.value == sorted_hands_by_rank_asc[1].repeated_cards.pop.value
-            player1 = sorted_hands_by_rank_asc[0].unique_cards.sort
-            player2 = sorted_hands_by_rank_asc[1].unique_cards.sort
+        # compares pairs
+        if sorted_hands_by_rank_asc[0].repeated_cards.pop.value > sorted_hands_by_rank_asc[1].repeated_cards.pop.value
+          Game.add_win_to_player(sorted_hands_by_rank_asc[0].player.name)
+        elsif sorted_hands_by_rank_asc[0].repeated_cards.pop.value < sorted_hands_by_rank_asc[1].repeated_cards.pop.value
+          Game.add_win_to_player(sorted_hands_by_rank_asc[1].player.name)
+        else
+          player1 = sorted_hands_by_rank_asc[0].unique_cards.sort
+          player2 = sorted_hands_by_rank_asc[1].unique_cards.sort
           ziped_card = player1.zip(player2)
+          tie = true
+
           ziped_card.each do |a, b|
             if (a.value ==  b.value)
               next
             elsif (a.value < b.value)
+              tie = false
               Game.add_win_to_player(b.hand.player.name)
               return
               # ADD CODE TO PUTS OUT THE WINNING CARDS
-            elsif (a.value > b.value)
+            else (a.value > b.value)
+              tie = false
               Game.add_win_to_player(a.hand.player.name)
               return
-            else
-              Game.add_win_to_player('draw')
-              # ADD CODE TO PUTS OUT THE WINNING CARDS
             end
           end
-        elsif sorted_hands_by_rank_asc[0].repeated_cards.pop.value > sorted_hands_by_rank_asc[1].repeated_cards.pop.value
-          Game.add_win_to_player(sorted_hands_by_rank_asc[0].player.name)
-        else
-          Game.add_win_to_player(sorted_hands_by_rank_asc[1].player.name)
+          if tie
+            Game.add_win_to_player('draw')
+          end
+
         end
       end
 
-       if sorted_hands_by_rank_asc[0].rank == 2
-        player1 = sorted_hands_by_rank_asc[0].unique_cards.sort
-        player2 = sorted_hands_by_rank_asc[1].unique_cards.sort
+      # TWO PAIR
+      if sorted_hands_by_rank_asc[0].rank == 2
         player1_uniq_pairs = sorted_hands_by_rank_asc[0].repeated_cards.uniq { |card| card.value}.sort
         player2_uniq_pairs = sorted_hands_by_rank_asc[1].repeated_cards.uniq { |card| card.value}.sort
         ziped_cards = player1_uniq_pairs.zip(player2_uniq_pairs)
-        ziped_cards.map! do |a, b|
+        ziped_cards.each do |a, b|
           if (a.value ==  b.value)
             next
           elsif (a.value < b.value)
@@ -160,23 +165,26 @@ class Game
             return
           end
         end
-        if ziped_cards.compact.empty?
-          if player1.first.value > player2.first.value
-            Game.add_win_to_player(player1.first.hand.player.name)
-          elsif player1.first.value < player2.first.value
-            Game.add_win_to_player(player2.first.hand.player.name)
-          else
-            Game.add_win_to_player('draw')
-          # ADD CODE TO PUTS OUT THE WINNING CARDS
-          end
-        end
-       end
 
+        player1 = sorted_hands_by_rank_asc[0].unique_cards.sort
+        player2 = sorted_hands_by_rank_asc[1].unique_cards.sort
+        if player1.first.value > player2.first.value
+          Game.add_win_to_player(player1.first.hand.player.name)
+        elsif player1.first.value < player2.first.value
+          Game.add_win_to_player(player2.first.hand.player.name)
+        else
+          Game.add_win_to_player('draw')
+        # ADD CODE TO PUTS OUT THE WINNING CARDS
+        end
+      end
+
+      # THREE OF A KIND
       if sorted_hands_by_rank_asc[0].rank == 3
+        binding.pry
         player1_uniq_pairs = sorted_hands_by_rank_asc[0].repeated_cards.uniq { |card| card.value}.sort
         player2_uniq_pairs = sorted_hands_by_rank_asc[1].repeated_cards.uniq { |card| card.value}.sort
         ziped_cards = player1_uniq_pairs.zip(player2_uniq_pairs)
-        ziped_cards.map! do |a, b|
+        ziped_cards.each do |a, b|
           if (a.value ==  b.value)
             next
           elsif (a.value < b.value)
@@ -191,7 +199,6 @@ class Game
        end
 
       if sorted_hands_by_rank_asc[0].rank == 4
-        binding.pry
         if sorted_hands_by_rank_asc[0].cards.first.value == sorted_hands_by_rank_asc[1].cards.first.value
           Game.add_win_to_player('draw')
         elsif sorted_hands_by_rank_asc[0].cards.first.value < sorted_hands_by_rank_asc[1].cards.first.value
@@ -201,27 +208,29 @@ class Game
         end
       end
 
+      # FLUSH
+
       if sorted_hands_by_rank_asc[0].rank == 5
-        binding.pry
         player1 = sorted_hands_by_rank_asc[0].cards.sort
         player2 = sorted_hands_by_rank_asc[1].cards.sort
+
         ziped_card = player1.zip(player2)
-        tie_break = true
+        tie = true
         ziped_card.each do |a, b|
           if (a.value ==  b.value)
             next
           elsif (a.value < b.value)
-            tie_break = false
+            tie = false
             Game.add_win_to_player(b.hand.player.name)
             return
             # ADD CODE TO PUTS OUT THE WINNING CARDS
           else (a.value > b.value)
-            tie_break = false
+            tie = false
             Game.add_win_to_player(a.hand.player.name)
             return
           end
         end
-        if tie_break
+        if tie
           Game.add_win_to_player('draw')
         end
       end
@@ -229,25 +238,26 @@ class Game
       # FULL HOUSE 3 , 2
 
       if sorted_hands_by_rank_asc[0].rank == 6
-        player1 = sorted_hands_by_rank_asc[0].cards.sort
-        player2 = sorted_hands_by_rank_asc[1].cards.sort
+        player1 = sorted_hands_by_rank_asc[0].arrange_by_of_kind_first
+        player2 = sorted_hands_by_rank_asc[1].arrange_by_of_kind_first
+
         ziped_card = player1.zip(player2)
-        tie_break = true
+        tie = true
         ziped_card.each do |a, b|
           if (a.value ==  b.value)
             next
           elsif (a.value < b.value)
-            tie_break = false
+            tie = false
             Game.add_win_to_player(b.hand.player.name)
             return
             # ADD CODE TO PUTS OUT THE WINNING CARDS
           else (a.value > b.value)
-            tie_break = false
+            tie = false
             Game.add_win_to_player(a.hand.player.name)
             return
           end
         end
-        if tie_break
+        if tie
           Game.add_win_to_player('draw')
         end
       end
@@ -458,6 +468,23 @@ class Hand
     # repeated_cards = cards.select { |card| repeated_values.include?(card.value)}
   end
 
+  def get_three_of_kind_cards
+    counts = Hash.new(0)
+    cards.each { |card| counts[card.value] += 1}
+    repeated_values = counts.select { |v, count| count == 3 }
+    repeated_cards = cards.select { |card| repeated_values.include?(card.value)}
+  end
+
+  def get_pairs_of_cards
+    counts = Hash.new(0)
+    cards.each { |card| counts[card.value] += 1}
+    repeated_values = counts.select { |v, count| count == 2 }
+    repeated_cards = cards.select { |card| repeated_values.include?(card.value)}
+  end
+
+  def arrange_by_of_kind_first
+    self.get_three_of_kind_cards + self.get_pairs_of_cards
+  end
 
   # def repeats
   #   cards.group_by(&:value)
