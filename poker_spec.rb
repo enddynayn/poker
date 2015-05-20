@@ -1,9 +1,10 @@
 require_relative 'poker_sprint2'
 RSpec.describe Game do
-  describe "#score" do
-    it "returns 0 for an all gutter game" do
-
-      game = Game.new
+  describe "Winner" do
+    it "" do
+      line = "8C TS KC 9H 4S 7D 2S 5D 3S AC"
+      game = Game.new(Deal.objectify(line))
+      binding.pry
       # 20.times { game.roll(0) }
       # expect(game.score).to eq(0)
     end

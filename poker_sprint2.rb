@@ -14,17 +14,14 @@ class Deal
   def self.cards
     File.open("./poker.txt", "r") do |f|
       f.each_line do |line|
-        # begin
           game = Game.new(objectify(line))
-          game.winner
-        # rescue
-          # puts 'oooh nooo!'
-        # end
+          hand = game.winner
+          binding.pry
       end
     end
-    binding.pry
 
     puts Game.games_count
+    binding.pry
   end
 
   def self.objectify(line)
@@ -84,12 +81,47 @@ class Game
     hands.sort
   end
 
+  def winning_hand
+
+  end
+
+  def first_place
+  end
+
+  def second_place
+
+  end
+
+  def final_hand_places
+  end
+
+  # RENAME TO FINAL HAND PLACES
   def winner
-    sorted_hands_by_rank_asc = hands.sort
-    if sorted_hands_by_rank_asc[0].rank == sorted_hands_by_rank_asc[1].rank
+    binding.pry
+
+    grouped_hands_by_ranking = hands.group_by(&:rank)
+    highest_ranking = grouped_hands_by_ranking.keys.max
+    binding.pry
+    highest_rank_hands = grouped_hands_by_ranking[highest_ranking]
+    binding.pry
+    if highest_rank_hands.length == 1
+     return [highest_rank_hands.first,
+    end
+
+
+      # if Hand::RANK.key(0) ==
+      sorted_hands_by_rank_asc = hands
+    # highest_rank_hands.each |
+    if sorted_hands_by_rank_asc[0] == sorted_hands_by_rank_asc[1]
+      # binding.pry
+
       if sorted_hands_by_rank_asc[0].rank == 0
         player1 = sorted_hands_by_rank_asc[0].cards.sort
         player2 = sorted_hands_by_rank_asc[1].cards.sort
+
+
+        resolve_tie_ranking(hand1, hand2)
+
         ziped_card = player1.zip(player2)
         tie = true
         ziped_card.each do |a, b|
@@ -315,7 +347,7 @@ class Game
       end
 
 
-    elsif sorted_hands_by_rank_asc[0].rank > sorted_hands_by_rank_asc[1].rank
+    elsif sorted_hands_by_rank_asc[0] > sorted_hands_by_rank_asc[1]
       Game.add_win_to_player(sorted_hands_by_rank_asc[0].player.name)
     else
       Game.add_win_to_player(sorted_hands_by_rank_asc[1].player.name)
@@ -397,7 +429,7 @@ class Hand
   end
 
   def three_of_a_kind?
-    of_a_kind? && repeated_cards?(3) #(number_of_a_kind == 3)
+    of_a_kind? && repeated_cards?(3)
   end
 
   def four_of_a_kind?
@@ -485,11 +517,6 @@ class Hand
   def arrange_by_of_kind_first
     self.get_three_of_kind_cards + self.get_pairs_of_cards
   end
-
-  # def repeats
-  #   cards.group_by(&:value)
-  # end
-
 
   def compare_hands
     # player1.cards.zip(player2.cards)
