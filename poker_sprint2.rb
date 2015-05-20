@@ -103,35 +103,10 @@ class Game
     sorted_hands_by_rank_asc = hands.sort
     if sorted_hands_by_rank_asc[0].rank == sorted_hands_by_rank_asc[1].rank
 
-
-      # 1 pair
-      if sorted_hands_by_rank_asc[0].rank == 1
+      if [:one_pair, :two_pairs, :three_of_a_kind, :four_of_a_kind].include? Hand::RANK.key(sorted_hands_by_rank_asc[0].rank)
         player1 = sorted_hands_by_rank_asc[0].repeated_cards + sorted_hands_by_rank_asc[0].unique_cards.sort
         player2 =  sorted_hands_by_rank_asc[1].repeated_cards + sorted_hands_by_rank_asc[1].unique_cards.sort
         compare_cards(player1, player2)
-      end
-
-      # FOUR OF A KIND
-      if sorted_hands_by_rank_asc[0].rank == 7
-        binding.pry
-        player1 = sorted_hands_by_rank_asc[0].repeated_cards + sorted_hands_by_rank_asc[0].unique_cards.sort
-        player2 = sorted_hands_by_rank_asc[1].repeated_cards + sorted_hands_by_rank_asc[1].unique_cards.sort
-        compare_cards(player1, player2)
-      end
-
-      # TWO PAIR
-      if sorted_hands_by_rank_asc[0].rank == 2
-        # binding.pry
-        player1 = sorted_hands_by_rank_asc[0].repeated_cards + sorted_hands_by_rank_asc[0].unique_cards.sort
-        player2 =  sorted_hands_by_rank_asc[1].repeated_cards + sorted_hands_by_rank_asc[1].unique_cards.sort
-        compare_cards(player1, player2)
-      end
-
-      # THREE OF A KIND
-      if sorted_hands_by_rank_asc[0].rank == 3
-        player1 = sorted_hands_by_rank_asc[0].repeated_cards + sorted_hands_by_rank_asc[0].unique_cards.sort
-        player2 =  sorted_hands_by_rank_asc[1].repeated_cards + sorted_hands_by_rank_asc[1].unique_cards.sort
-        compare_cards(player1_uniq_pairs, player2_uniq_pairs)
       end
 
       # HIGH CARD
