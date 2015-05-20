@@ -103,11 +103,6 @@ class Game
     sorted_hands_by_rank_asc = hands.sort
     if sorted_hands_by_rank_asc[0].rank == sorted_hands_by_rank_asc[1].rank
 
-      if sorted_hands_by_rank_asc[0].rank == 0
-        player1 = sorted_hands_by_rank_asc[0].cards.sort
-        player2 = sorted_hands_by_rank_asc[1].cards.sort
-        compare_cards(player1,player2)
-      end
 
       # 1 pair
       if sorted_hands_by_rank_asc[0].rank == 1
@@ -118,9 +113,10 @@ class Game
 
       # FOUR OF A KIND
       if sorted_hands_by_rank_asc[0].rank == 7
-        player1_uniq_pairs = sorted_hands_by_rank_asc[0].repeated_cards.uniq { |card| card.value}.sort
-        player2_uniq_pairs = sorted_hands_by_rank_asc[1].repeated_cards.uniq { |card| card.value}.sort
-        compare_cards(player1_uniq_pairs, player2_uniq_pairs)
+        binding.pry
+        player1 = sorted_hands_by_rank_asc[0].repeated_cards + sorted_hands_by_rank_asc[0].unique_cards.sort
+        player2 = sorted_hands_by_rank_asc[1].repeated_cards + sorted_hands_by_rank_asc[1].unique_cards.sort
+        compare_cards(player1, player2)
       end
 
       # TWO PAIR
@@ -138,8 +134,14 @@ class Game
         compare_cards(player1_uniq_pairs, player2_uniq_pairs)
       end
 
-      # STRAIGHT
+      # HIGH CARD
+      if sorted_hands_by_rank_asc[0].rank == 0
+        player1 = sorted_hands_by_rank_asc[0].cards.sort
+        player2 = sorted_hands_by_rank_asc[1].cards.sort
+        compare_cards(player1,player2)
+      end
 
+      # STRAIGHT
       if sorted_hands_by_rank_asc[0].rank == 4
         player1 = sorted_hands_by_rank_asc[0].cards.sort
         player2 = sorted_hands_by_rank_asc[1].cards.sort
