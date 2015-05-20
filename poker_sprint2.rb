@@ -77,10 +77,12 @@ class Game
   def rankings
     hands.sort
   end
-  def compare_hands(player1, player2)
-    ziped_card = player1.zip(player2)
+
+
+  def compare_cards(player1, player2)
+    ziped_cards = player1.zip(player2)
     tie = true
-    ziped_card.each do |a, b|
+    ziped_cards.each do |a, b|
       if (a.value ==  b.value)
         next
       elsif (a.value < b.value)
@@ -106,7 +108,7 @@ class Game
       if sorted_hands_by_rank_asc[0].rank == 0
         player1 = sorted_hands_by_rank_asc[0].cards.sort
         player2 = sorted_hands_by_rank_asc[1].cards.sort
-        compare_hands(player1,player2)
+        compare_cards(player1,player2)
 
       end
 
@@ -120,7 +122,7 @@ class Game
         else
           player1 = sorted_hands_by_rank_asc[0].unique_cards.sort
           player2 = sorted_hands_by_rank_asc[1].unique_cards.sort
-          compare_hands(player1, player2)
+          compare_cards(player1, player2)
         end
       end
 
@@ -129,7 +131,7 @@ class Game
         player1_uniq_pairs = sorted_hands_by_rank_asc[0].repeated_cards.uniq { |card| card.value}.sort
         player2_uniq_pairs = sorted_hands_by_rank_asc[1].repeated_cards.uniq { |card| card.value}.sort
 
-        compare_hands(player1_uniq_pairs, player2_uniq_pairs)
+        compare_cards(player1_uniq_pairs, player2_uniq_pairs)
 
         player1 = sorted_hands_by_rank_asc[0].unique_cards.sort
         player2 = sorted_hands_by_rank_asc[1].unique_cards.sort
@@ -147,7 +149,7 @@ class Game
       if sorted_hands_by_rank_asc[0].rank == 3
         player1_uniq_pairs = sorted_hands_by_rank_asc[0].repeated_cards.uniq { |card| card.value}.sort
         player2_uniq_pairs = sorted_hands_by_rank_asc[1].repeated_cards.uniq { |card| card.value}.sort
-        compare_hands(player1_uniq_pairs, player2_uniq_pairs)
+        compare_cards(player1_uniq_pairs, player2_uniq_pairs)
        end
 
       if sorted_hands_by_rank_asc[0].rank == 4
@@ -165,7 +167,7 @@ class Game
       if sorted_hands_by_rank_asc[0].rank == 5
         player1 = sorted_hands_by_rank_asc[0].cards.sort
         player2 = sorted_hands_by_rank_asc[1].cards.sort
-        compare_hands(player1, player2)
+        compare_cards(player1, player2)
       end
 
       # FULL HOUSE 3 , 2
@@ -173,7 +175,7 @@ class Game
       if sorted_hands_by_rank_asc[0].rank == 6
         player1 = sorted_hands_by_rank_asc[0].arrange_by_of_kind_first
         player2 = sorted_hands_by_rank_asc[1].arrange_by_of_kind_first
-        compare_hands(player1, player2)
+        compare_cards(player1, player2)
       end
 
       # FOUR OF A KIND
@@ -182,7 +184,7 @@ class Game
         binding.pry
         player1_uniq_pairs = sorted_hands_by_rank_asc[0].repeated_cards.uniq { |card| card.value}.sort
         player2_uniq_pairs = sorted_hands_by_rank_asc[1].repeated_cards.uniq { |card| card.value}.sort
-        compare_hands(player1_uniq_pairs, player2_uniq_pairs)
+        compare_cards(player1_uniq_pairs, player2_uniq_pairs)
       end
 
        # STRAIGHT FLUSH 8
@@ -190,7 +192,7 @@ class Game
       if sorted_hands_by_rank_asc[0].rank == 8
         player1 = sorted_hands_by_rank_asc[0].cards.sort
         player2 = sorted_hands_by_rank_asc[1].cards.sort
-        compare_hands(player1, player2)
+        compare_cards(player1, player2)
       end
 
        # ROYAL FLUSH 9
@@ -369,7 +371,7 @@ class Hand
     self.get_three_of_kind_cards + self.get_pairs_of_cards
   end
 
-  def compare_hands(hand1, hand2)
+  def compare_cards(hand1, hand2)
     hand1.cards.zip(hand2.cards)
   end
 
@@ -426,4 +428,3 @@ class Card
 end
 
 Deal.cards
-
