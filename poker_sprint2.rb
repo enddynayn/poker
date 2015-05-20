@@ -29,7 +29,7 @@ class Deal
 
     hands_array_objects = []
     hands_data.each_with_index do |hand, index|
-      new_player = Player.new("player#{index}")
+      new_player = Player.new("player#{index + 1}")
       new_hand = Hand.new
       new_hand.add_player(new_player)
 
@@ -106,21 +106,17 @@ class Game
       if [:one_pair, :two_pairs, :three_of_a_kind, :four_of_a_kind].include? Hand::RANK.key(sorted_hands_by_rank_asc[0].rank)
         player1 = sorted_hands_by_rank_asc[0].repeated_cards + sorted_hands_by_rank_asc[0].unique_cards.sort
         player2 =  sorted_hands_by_rank_asc[1].repeated_cards + sorted_hands_by_rank_asc[1].unique_cards.sort
-        compare_cards(player1, player2)
-      end
 
-      if [:high_card, :straight, :flush, :straight_flush, :royal_flush].include? Hand::RANK.key(sorted_hands_by_rank_asc[0].rank)
+      elsif [:high_card, :straight, :flush, :straight_flush, :royal_flush].include? Hand::RANK.key(sorted_hands_by_rank_asc[0].rank)
         player1 = sorted_hands_by_rank_asc[0].cards.sort
         player2 = sorted_hands_by_rank_asc[1].cards.sort
-        compare_cards(player1,player2)
-      end
-
-      # FULL HOUSE 3 , 2
-      if sorted_hands_by_rank_asc[0].rank == 6
+      else
+        # FULL HOUSE 3 , 2
+        #[:full_house].include? Hand::RANK.key(sorted_hands_by_rank_asc[0].rank)
         player1 = sorted_hands_by_rank_asc[0].arrange_by_of_kind_first
         player2 = sorted_hands_by_rank_asc[1].arrange_by_of_kind_first
-        compare_cards(player1, player2)
       end
+      compare_cards(player1, player2)
 
     elsif sorted_hands_by_rank_asc[0].rank > sorted_hands_by_rank_asc[1].rank
       Game.add_win_to_player(sorted_hands_by_rank_asc[0].player.name)
