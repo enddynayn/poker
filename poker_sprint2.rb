@@ -13,14 +13,22 @@ class Deal
 
   def self.cards
     File.open("./poker.txt", "r") do |f|
+
       f.each_line do |line|
         game = Game.new(objectify(line))
+        # final_rankings = game. = []
+        puts "****" * 10
         game.winner
+        puts "****" * 10
       end
     end
-    binding.pry
+    # binding.pry
 
-    puts Game.games_count
+    puts "********************\n"
+    puts "Total number of wins by each player: #{Game.get_player_winnings_count}"
+    puts "********************\n"
+    puts "total games: #{Game.games_count}"
+    puts "********************\n"
   end
 
   def self.objectify(line)
@@ -90,9 +98,13 @@ class Game
         next
       elsif (a.value < b.value)
         Game.add_win_to_player(b.hand.player.name)
+        puts "winner: #{b.hand.player.name} hand: #{b.hand.pretty_hand}"
+        puts "loser: #{a.hand.player.name} hand: #{a.hand.pretty_hand}"
         return
       else (a.value > b.value)
         Game.add_win_to_player(a.hand.player.name)
+        puts "winner: #{a.hand.player.name} hand: #{a.hand.pretty_hand}"
+        puts "loser: #{b.hand.player.name} hand: #{b.hand.pretty_hand}"
         return
       end
     end
@@ -102,7 +114,6 @@ class Game
   def winner
     sorted_hands_by_rank_asc = hands.sort
     if sorted_hands_by_rank_asc[0].rank == sorted_hands_by_rank_asc[1].rank
-
       if [:one_pair, :two_pairs, :three_of_a_kind, :four_of_a_kind].include? Hand::RANK.key(sorted_hands_by_rank_asc[0].rank)
         player1 = sorted_hands_by_rank_asc[0].repeated_cards + sorted_hands_by_rank_asc[0].unique_cards.sort
         player2 =  sorted_hands_by_rank_asc[1].repeated_cards + sorted_hands_by_rank_asc[1].unique_cards.sort
@@ -111,7 +122,7 @@ class Game
         player1 = sorted_hands_by_rank_asc[0].cards.sort
         player2 = sorted_hands_by_rank_asc[1].cards.sort
       else
-        # FULL HOUSE 3 , 2
+        # FULL HOUSE
         #[:full_house].include? Hand::RANK.key(sorted_hands_by_rank_asc[0].rank)
         player1 = sorted_hands_by_rank_asc[0].arrange_by_of_kind_first
         player2 = sorted_hands_by_rank_asc[1].arrange_by_of_kind_first
@@ -120,8 +131,12 @@ class Game
 
     elsif sorted_hands_by_rank_asc[0].rank > sorted_hands_by_rank_asc[1].rank
       Game.add_win_to_player(sorted_hands_by_rank_asc[0].player.name)
+      puts "winner: #{sorted_hands_by_rank_asc[0].player.name} hand: #{sorted_hands_by_rank_asc[0].pretty_hand}"
+      puts "loser: #{sorted_hands_by_rank_asc[1].player.name} hand: #{sorted_hands_by_rank_asc[1].pretty_hand}"
     else
       Game.add_win_to_player(sorted_hands_by_rank_asc[1].player.name)
+      puts "winner: #{sorted_hands_by_rank_asc[1].player.name} hand: #{sorted_hands_by_rank_asc[1].pretty_hand}"
+      puts "loser: #{sorted_hands_by_rank_asc[0].player.name} hand: #{sorted_hands_by_rank_asc[0].pretty_hand}"
     end
   end
 end
@@ -176,6 +191,10 @@ class Hand
         return RANK[hand_value]
       end
     end
+  end
+
+  def pretty_hand
+    cards.collect {|card| card.original_value}
   end
 
   def low_card
@@ -331,6 +350,11 @@ class Card
     else
       return FACE_CARDS[value.to_sym]
     end
+  end
+
+  def original_value
+    value = FACE_CARDS.key(self.value) || self.value
+    "#{value}#{self.suit}"
   end
 
   private
