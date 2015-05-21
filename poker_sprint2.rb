@@ -111,6 +111,7 @@ class Game
 
   end
 
+  # REFACTOR: rename method and return array of objects in order of first placel, second...
   def winner
     sorted_hands_by_rank_asc = hands.sort
     if sorted_hands_by_rank_asc[0].rank == sorted_hands_by_rank_asc[1].rank
