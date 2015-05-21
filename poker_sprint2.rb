@@ -22,7 +22,6 @@ class Deal
         puts "****" * 10
       end
     end
-    # binding.pry
 
     puts "********************\n"
     puts "Total number of wins by each player: #{Game.get_player_winnings_count}"
